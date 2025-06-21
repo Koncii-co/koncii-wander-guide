@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
@@ -43,7 +42,7 @@ const InspirationCarousel = () => {
   const destinations = [
     {
       title: "Santorini, Greece",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&h=300&fit=crop",
       price: "$1,299",
       rating: 4.9,
       duration: "7 days",
@@ -52,7 +51,7 @@ const InspirationCarousel = () => {
     },
     {
       title: "Kyoto, Japan",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=300&fit=crop",
       price: "$1,899",
       rating: 4.8,
       duration: "10 days",
@@ -61,7 +60,7 @@ const InspirationCarousel = () => {
     },
     {
       title: "Bali, Indonesia",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400&h=300&fit=crop",
       price: "$899",
       rating: 4.7,
       duration: "5 days",
@@ -70,7 +69,7 @@ const InspirationCarousel = () => {
     },
     {
       title: "Paris, France",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop",
       price: "$1,599",
       rating: 4.9,
       duration: "6 days",
@@ -79,7 +78,7 @@ const InspirationCarousel = () => {
     },
     {
       title: "Machu Picchu, Peru",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=400&h=300&fit=crop",
       price: "$1,199",
       rating: 4.8,
       duration: "8 days",
