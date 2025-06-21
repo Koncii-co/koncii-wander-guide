@@ -23,6 +23,7 @@ const Index = () => {
   const [showExpandedSearch, setShowExpandedSearch] = useState(false);
   const [userSynced, setUserSynced] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [initialChatPrompt, setInitialChatPrompt] = useState("");
   const navigate = useNavigate();
   const { isAuthenticated, user, logout, isLoading } = useAuth0();
   const { toast } = useToast();
@@ -81,6 +82,16 @@ const Index = () => {
         returnTo: window.location.origin
       }
     });
+  };
+
+  const handleChatOpenWithPrompt = (prompt: string) => {
+    setInitialChatPrompt(prompt);
+    setShowChat(true);
+  };
+
+  const handleChatClose = () => {
+    setShowChat(false);
+    setInitialChatPrompt("");
   };
 
   return (
@@ -228,7 +239,7 @@ const Index = () => {
 
         {/* Quick Actions */}
         <div className={`transition-all duration-1000 delay-700 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <QuickActions />
+          <QuickActions onChatOpen={handleChatOpenWithPrompt} />
         </div>
 
         {/* Inspiration Carousel */}
@@ -253,7 +264,7 @@ const Index = () => {
       {/* Chat Interface */}
       {showChat && (
         <div className="animate-slide-in">
-          <ChatInterface onClose={() => setShowChat(false)} />
+          <ChatInterface onClose={handleChatClose} initialPrompt={initialChatPrompt} />
         </div>
       )}
 

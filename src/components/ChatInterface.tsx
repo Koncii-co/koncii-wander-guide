@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,10 @@ interface ChatMessage {
 
 interface ChatInterfaceProps {
   onClose: () => void;
+  initialPrompt?: string;
 }
 
-const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
+const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -28,6 +29,32 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState("");
+
+  // Handle initial prompt when component mounts
+  useEffect(() => {
+    if (initialPrompt) {
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        sender: 'user',
+        message: initialPrompt,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+
+      // Simulate AI response to the initial prompt
+      setTimeout(() => {
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          sender: 'ai',
+          message: "Perfect! I'd be happy to help you with that. Let me gather some information to provide you with the best assistance possible. What specific details can you share to get started?",
+          timestamp: new Date(),
+          agent: 'travel_planning_agent'
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      }, 1000);
+    }
+  }, [initialPrompt]);
 
   const sendMessage = () => {
     if (!inputMessage.trim()) return;
