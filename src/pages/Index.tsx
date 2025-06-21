@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, Calendar, User, Settings, LogOut } from "lucide-react";
+import { Search, MapPin, Calendar, User, Settings, LogOut, Edit } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import InspirationCarousel from "@/components/InspirationCarousel";
 import QuickActions from "@/components/QuickActions";
@@ -35,6 +35,11 @@ const Index = () => {
 
   const handleAuthClick = () => {
     navigate('/auth');
+  };
+
+  const handleProfileEdit = () => {
+    // This will be implemented in the next step
+    console.log('Edit profile clicked');
   };
 
   const handleLogout = () => {
@@ -86,9 +91,18 @@ const Index = () => {
             <ThemeToggle />
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground hidden sm:inline">
-                  Welcome, {user?.name || user?.email}
+                <span className="text-sm font-medium hidden sm:inline">
+                  {user?.name || user?.email || 'User'}
                 </span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleProfileEdit}
+                  className="flex items-center space-x-2"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span className="hidden sm:inline">Edit Profile</span>
+                </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -96,7 +110,7 @@ const Index = () => {
                   className="flex items-center space-x-2"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
+                  <span className="hidden sm:inline">Sign Out</span>
                 </Button>
               </div>
             ) : (
