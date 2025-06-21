@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,11 +28,11 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState("");
-  const [initialPromptProcessed, setInitialPromptProcessed] = useState(false);
+  const initialPromptProcessed = useRef(false);
 
   // Handle initial prompt when component mounts
   useEffect(() => {
-    if (initialPrompt && !initialPromptProcessed) {
+    if (initialPrompt && !initialPromptProcessed.current) {
       const userMessage: ChatMessage = {
         id: Date.now().toString(),
         sender: 'user',
@@ -42,7 +41,7 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
       };
 
       setMessages(prev => [...prev, userMessage]);
-      setInitialPromptProcessed(true);
+      initialPromptProcessed.current = true;
 
       // Simulate AI response to the initial prompt
       setTimeout(() => {
@@ -56,7 +55,7 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
         setMessages(prev => [...prev, aiMessage]);
       }, 1000);
     }
-  }, [initialPrompt, initialPromptProcessed]);
+  }, [initialPrompt]);
 
   const sendMessage = () => {
     if (!inputMessage.trim()) return;
