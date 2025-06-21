@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ import QuickActions from "@/components/QuickActions";
 import ExploreSection from "@/components/ExploreSection";
 import ChatInterface from "@/components/ChatInterface";
 import ThemeToggle from "@/components/ThemeToggle";
+import KonciiLogo from "@/components/KonciiLogo";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,10 +19,8 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-primary-foreground" />
-            </div>
+          <div className="flex items-center space-x-3">
+            <KonciiLogo size={40} className="text-primary" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Koncii
             </h1>

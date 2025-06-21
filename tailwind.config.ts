@@ -64,18 +64,13 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				koncii: {
-					'dark-green': '#006400',
-					'light-green': '#00C000',
-					'green-50': '#f0fff4',
-					'green-100': '#dcfce7',
-					'green-200': '#bbf7d0',
-					'green-300': '#86efac',
-					'green-400': '#4ade80',
-					'green-500': '#22c55e',
-					'green-600': '#16a34a',
-					'green-700': '#15803d',
-					'green-800': '#166534',
-					'green-900': '#14532d',
+					'primary': '#40B3A2',
+					'secondary': '#359B8C',
+					'accent': '#2D8276',
+					'light': '#52C4B0',
+					'lighter': '#66D1C0',
+					'dark': '#1F5A52',
+					'darker': '#0F3B35',
 				}
 			},
 			borderRadius: {
