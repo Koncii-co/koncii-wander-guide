@@ -22,7 +22,7 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
     {
       id: '1',
       sender: 'ai',
-      message: "Hello! I'm your AI travel concierge. How can I help you plan your perfect trip today?",
+      message: "Hello! I'm your Koncii, your AI travel concierge. How can I help you plan your perfect trip today?",
       timestamp: new Date(),
       agent: 'travel_concierge_agent'
     }
