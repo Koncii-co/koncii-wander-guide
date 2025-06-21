@@ -121,7 +121,7 @@ const BookingMap = ({ booking }: BookingMapProps) => {
                     {route.duration}
                   </div>
                   <span>{route.stops} stops</span>
-                  <Badge variant="outline" size="sm">
+                  <Badge variant="outline" className="text-xs px-2 py-1">
                     {route.difficulty}
                   </Badge>
                 </div>
