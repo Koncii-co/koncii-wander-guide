@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +10,16 @@ import ExploreSection from "@/components/ExploreSection";
 import ChatInterface from "@/components/ChatInterface";
 import ThemeToggle from "@/components/ThemeToggle";
 import KonciiLogo from "@/components/KonciiLogo";
+import ExpandedSearch from "@/components/ExpandedSearch";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [showExpandedSearch, setShowExpandedSearch] = useState(false);
+
+  const handleSearchClick = () => {
+    setShowExpandedSearch(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,6 +88,7 @@ const Index = () => {
               <Button 
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 koncii-button"
                 size="sm"
+                onClick={handleSearchClick}
               >
                 Search
               </Button>
@@ -107,6 +115,15 @@ const Index = () => {
       {/* Chat Interface */}
       {showChat && (
         <ChatInterface onClose={() => setShowChat(false)} />
+      )}
+
+      {/* Expanded Search Interface */}
+      {showExpandedSearch && (
+        <ExpandedSearch
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onClose={() => setShowExpandedSearch(false)}
+        />
       )}
     </div>
   );
