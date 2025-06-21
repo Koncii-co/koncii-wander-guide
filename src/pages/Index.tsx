@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, Calendar, User, Settings } from "lucide-react";
+import { Search, MapPin, Calendar, User, Settings, LogOut } from "lucide-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import InspirationCarousel from "@/components/InspirationCarousel";
 import QuickActions from "@/components/QuickActions";
 import ExploreSection from "@/components/ExploreSection";
@@ -18,6 +19,7 @@ const Index = () => {
   const [showChat, setShowChat] = useState(false);
   const [showExpandedSearch, setShowExpandedSearch] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth0();
 
   const handleSearchClick = () => {
     setShowExpandedSearch(true);
@@ -33,6 +35,14 @@ const Index = () => {
 
   const handleAuthClick = () => {
     navigate('/auth');
+  };
+
+  const handleLogout = () => {
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
   };
 
   return (
@@ -74,15 +84,32 @@ const Index = () => {
 
           <div className="flex items-center space-x-2">
             <ThemeToggle />
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleAuthClick}
-              className="flex items-center space-x-2"
-            >
-              <User className="w-4 h-4" />
-              <span>Sign In</span>
-            </Button>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground hidden sm:inline">
+                  Welcome, {user?.name || user?.email}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleAuthClick}
+                className="flex items-center space-x-2"
+              >
+                <User className="w-4 h-4" />
+                <span>Sign In</span>
+              </Button>
+            )}
             <Button variant="ghost" size="icon">
               <Settings className="w-5 h-5" />
             </Button>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,8 +22,19 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const { toast } = useToast();
+
+  // Close modal when user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      toast({
+        title: "Success",
+        description: "Successfully signed in!"
+      });
+      onClose();
+    }
+  }, [isAuthenticated, onClose, toast]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,15 +50,12 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
         return;
       }
 
-      // Simulate authentication - replace with actual auth logic
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Success",
-        description: mode === 'login' ? "Successfully signed in!" : "Account created successfully!"
+      // Use Auth0 for email/password authentication
+      await loginWithRedirect({
+        authorizationParams: {
+          screen_hint: mode === 'signup' ? 'signup' : 'login',
+        },
       });
-      
-      onClose();
     } catch (error) {
       toast({
         title: "Error",
@@ -75,6 +83,22 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
     });
   };
 
+  // Show loading state while Auth0 is processing
+  if (isLoading) {
+    return (
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex items-center justify-center p-8">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p>Authenticating...</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -98,6 +122,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
               variant="outline"
               className="w-full"
               onClick={handleGoogleAuth}
+              disabled={loading || isLoading}
             >
               <Mail className="w-4 h-4 mr-2" />
               Continue with Google
@@ -108,6 +133,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
               variant="outline"
               className="w-full"
               onClick={handleGithubAuth}
+              disabled={loading || isLoading}
             >
               <Github className="w-4 h-4 mr-2" />
               Continue with GitHub
@@ -136,6 +162,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading || isLoading}
               />
             </div>
 
@@ -149,6 +176,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading || isLoading}
                 />
                 <Button
                   type="button"
@@ -156,6 +184,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading || isLoading}
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -176,12 +205,13 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  disabled={loading || isLoading}
                 />
               </div>
             )}
 
-            <Button type="submit" className="w-full koncii-button" disabled={loading}>
-              {loading ? "Please wait..." : (mode === 'login' ? 'Sign In' : 'Create Account')}
+            <Button type="submit" className="w-full koncii-button" disabled={loading || isLoading}>
+              {loading || isLoading ? "Please wait..." : (mode === 'login' ? 'Sign In' : 'Create Account')}
             </Button>
           </form>
 
@@ -195,6 +225,7 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
               variant="link"
               className="p-0 h-auto font-normal"
               onClick={() => onSwitchMode(mode === 'login' ? 'signup' : 'login')}
+              disabled={loading || isLoading}
             >
               {mode === 'login' ? 'Sign up' : 'Sign in'}
             </Button>
