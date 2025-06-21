@@ -203,18 +203,18 @@ const Index = () => {
           {/* Enhanced Search Bar */}
           <div className={`max-w-2xl mx-auto relative transition-all duration-1000 delay-500 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <Card className="koncii-card hover:shadow-2xl transition-all duration-500 hover:scale-105 group">
-              <CardContent className="p-2">
+              <CardContent className="p-2 md:p-2">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
                   <Input
                     type="text"
                     placeholder="Where do you want to go?"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-20 py-4 text-lg bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="pl-10 pr-16 py-3 md:pl-12 md:pr-20 md:py-4 text-base md:text-lg bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   <Button 
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 koncii-button hover:scale-110 transition-all duration-300"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 koncii-button hover:scale-110 transition-all duration-300 text-xs md:text-sm px-3 py-1 md:px-4 md:py-2"
                     size="sm"
                     onClick={handleSearchClick}
                   >
