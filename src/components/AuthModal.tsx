@@ -61,13 +61,17 @@ const AuthModal = ({ mode, onClose, onSwitchMode }: AuthModalProps) => {
 
   const handleGoogleAuth = () => {
     loginWithRedirect({
-      connection: 'google-oauth2',
+      authorizationParams: {
+        connection: 'google-oauth2',
+      },
     });
   };
 
   const handleGithubAuth = () => {
     loginWithRedirect({
-      connection: 'github',
+      authorizationParams: {
+        connection: 'github',
+      },
     });
   };
 
