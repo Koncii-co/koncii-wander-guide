@@ -11,22 +11,28 @@ import ChatInterface from "@/components/ChatInterface";
 import ThemeToggle from "@/components/ThemeToggle";
 import KonciiLogo from "@/components/KonciiLogo";
 import ExpandedSearch from "@/components/ExpandedSearch";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [showExpandedSearch, setShowExpandedSearch] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearchClick = () => {
     setShowExpandedSearch(true);
   };
 
   const handleBookingsClick = () => {
-    window.location.href = '/bookings';
+    navigate('/bookings');
   };
 
   const handleTripsClick = () => {
-    window.location.href = '/trips';
+    navigate('/trips');
+  };
+
+  const handleAuthClick = () => {
+    navigate('/auth');
   };
 
   return (
@@ -68,11 +74,17 @@ const Index = () => {
 
           <div className="flex items-center space-x-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon">
-              <Settings className="w-5 h-5" />
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleAuthClick}
+              className="flex items-center space-x-2"
+            >
+              <User className="w-4 h-4" />
+              <span>Sign In</span>
             </Button>
             <Button variant="ghost" size="icon">
-              <User className="w-5 h-5" />
+              <Settings className="w-5 h-5" />
             </Button>
           </div>
         </div>
