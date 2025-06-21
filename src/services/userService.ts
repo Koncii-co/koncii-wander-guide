@@ -14,13 +14,6 @@ export interface UserProfile {
 export const syncUserWithSupabase = async (auth0User: any): Promise<UserProfile | null> => {
   try {
     console.log('Syncing user with Supabase:', auth0User);
-    
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0User.sub,
-      is_local: true
-    });
 
     // Check if user already exists
     const { data: existingUser, error: fetchError } = await supabase
@@ -82,13 +75,6 @@ export const syncUserWithSupabase = async (auth0User: any): Promise<UserProfile 
 
 export const getCurrentUserProfile = async (auth0UserId: string): Promise<UserProfile | null> => {
   try {
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0UserId,
-      is_local: true
-    });
-
     const { data, error } = await supabase
       .from('user_profiles')
       .select('*')

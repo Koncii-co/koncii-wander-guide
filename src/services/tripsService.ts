@@ -6,7 +6,7 @@ export interface Trip {
   user_id: string;
   destination: string;
   dates: string;
-  status: 'planning' | 'confirmed' | 'upcoming';
+  status: string; // Changed from union type to string to match database
   image_url?: string;
   hotel?: string;
   travelers: number;
@@ -21,16 +21,22 @@ export interface Trip {
 
 export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
   try {
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0UserId,
-      is_local: true
-    });
+    // First get the user profile to get the internal user_id
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('auth0_user_id', auth0UserId)
+      .single();
+
+    if (!profile) {
+      console.error('User profile not found');
+      return [];
+    }
 
     const { data, error } = await supabase
       .from('trips')
       .select('*')
+      .eq('user_id', profile.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -47,13 +53,6 @@ export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
 
 export const createTrip = async (auth0UserId: string, tripData: Omit<Trip, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'added_date'>): Promise<Trip | null> => {
   try {
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0UserId,
-      is_local: true
-    });
-
     // Get user profile to get the user_id
     const { data: profile } = await supabase
       .from('user_profiles')
@@ -89,12 +88,17 @@ export const createTrip = async (auth0UserId: string, tripData: Omit<Trip, 'id' 
 
 export const updateTrip = async (auth0UserId: string, tripId: string, updates: Partial<Trip>): Promise<Trip | null> => {
   try {
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0UserId,
-      is_local: true
-    });
+    // Get user profile to verify ownership
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('auth0_user_id', auth0UserId)
+      .single();
+
+    if (!profile) {
+      console.error('User profile not found');
+      return null;
+    }
 
     const { data, error } = await supabase
       .from('trips')
@@ -103,6 +107,7 @@ export const updateTrip = async (auth0UserId: string, tripId: string, updates: P
         updated_at: new Date().toISOString()
       })
       .eq('id', tripId)
+      .eq('user_id', profile.id) // Ensure user can only update their own trips
       .select()
       .single();
 
@@ -120,17 +125,23 @@ export const updateTrip = async (auth0UserId: string, tripId: string, updates: P
 
 export const deleteTrip = async (auth0UserId: string, tripId: string): Promise<boolean> => {
   try {
-    // Set the current user context for RLS
-    await supabase.rpc('set_config', {
-      setting_name: 'app.current_user_id',
-      setting_value: auth0UserId,
-      is_local: true
-    });
+    // Get user profile to verify ownership
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('auth0_user_id', auth0UserId)
+      .single();
+
+    if (!profile) {
+      console.error('User profile not found');
+      return false;
+    }
 
     const { error } = await supabase
       .from('trips')
       .delete()
-      .eq('id', tripId);
+      .eq('id', tripId)
+      .eq('user_id', profile.id); // Ensure user can only delete their own trips
 
     if (error) {
       console.error('Error deleting trip:', error);
