@@ -1,5 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import Map, { Marker } from "react-map-gl";
+import * as mapboxgl from "mapbox-gl";
+import { useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,25 @@ const BookingMap = ({ booking }: BookingMapProps) => {
   ];
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!mapboxToken || !mapContainer.current) return;
+
+    const map = new mapboxgl.Map({
+      accessToken: mapboxToken,
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: [booking.coordinates.lng, booking.coordinates.lat],
+      zoom: 13,
+    });
+
+    new mapboxgl.Marker()
+      .setLngLat([booking.coordinates.lng, booking.coordinates.lat])
+      .addTo(map);
+
+    return () => map.remove();
+  }, [booking.coordinates, mapboxToken]);
 
   return (
     <div className="space-y-6">
@@ -63,23 +83,7 @@ const BookingMap = ({ booking }: BookingMapProps) => {
         <CardContent>
           <div className="relative">
             {mapboxToken ? (
-              <Map
-                initialViewState={{
-                  longitude: booking.coordinates.lng,
-                  latitude: booking.coordinates.lat,
-                  zoom: 13,
-                }}
-                style={{ width: "100%", height: 384 }}
-                mapStyle="mapbox://styles/mapbox/streets-v11"
-                mapboxAccessToken={mapboxToken}
-              >
-                <Marker
-                  longitude={booking.coordinates.lng}
-                  latitude={booking.coordinates.lat}
-                >
-                  <MapPin className="w-8 h-8 text-primary" />
-                </Marker>
-              </Map>
+              <div ref={mapContainer} className="w-full h-96 rounded-lg" />
             ) : (
               <div className="w-full h-96 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
                 <div className="text-center space-y-2">
