@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,10 @@ interface ChatMessage {
 
 interface ChatInterfaceProps {
   onClose: () => void;
+  initialPrompt?: string;
 }
 
-const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
+const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "1",
@@ -41,6 +43,16 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
+  const initialPromptProcessed = useRef(false);
+
+  // Handle initial prompt
+  useEffect(() => {
+    if (initialPrompt && !initialPromptProcessed.current) {
+      console.log('Processing initial prompt:', initialPrompt);
+      setInputMessage(initialPrompt);
+      initialPromptProcessed.current = true;
+    }
+  }, [initialPrompt]);
 
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
