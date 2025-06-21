@@ -25,6 +25,10 @@ const Index = () => {
     window.location.href = '/bookings';
   };
 
+  const handleTripsClick = () => {
+    window.location.href = '/trips';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -39,7 +43,13 @@ const Index = () => {
           
           <nav className="hidden md:flex items-center space-x-6">
             <Button variant="ghost" size="sm">Explore</Button>
-            <Button variant="ghost" size="sm">Trips</Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleTripsClick}
+            >
+              Trips
+            </Button>
             <Button 
               variant="ghost" 
               size="sm"
