@@ -1,4 +1,5 @@
-
+import "mapbox-gl/dist/mapbox-gl.css";
+import Map, { Marker } from "react-map-gl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,8 @@ const BookingMap = ({ booking }: BookingMapProps) => {
     { name: "Food & Shopping Tour", duration: "3 hours", stops: 4, difficulty: "Easy" }
   ];
 
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+
   return (
     <div className="space-y-6">
       {/* Map Placeholder */}
@@ -59,19 +62,37 @@ const BookingMap = ({ booking }: BookingMapProps) => {
         </CardHeader>
         <CardContent>
           <div className="relative">
-            {/* Map placeholder - In a real app, you'd integrate with Google Maps or Mapbox */}
-            <div className="w-full h-96 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
-              <div className="text-center space-y-2">
-                <MapPin className="w-12 h-12 mx-auto text-primary/60" />
-                <p className="text-lg font-semibold text-primary">Interactive Map</p>
-                <p className="text-sm text-muted-foreground">
-                  Coordinates: {booking.coordinates.lat}, {booking.coordinates.lng}
-                </p>
-                <Badge variant="outline" className="bg-primary/10">
-                  {booking.destination}
-                </Badge>
+            {mapboxToken ? (
+              <Map
+                initialViewState={{
+                  longitude: booking.coordinates.lng,
+                  latitude: booking.coordinates.lat,
+                  zoom: 13,
+                }}
+                style={{ width: "100%", height: 384 }}
+                mapStyle="mapbox://styles/mapbox/streets-v11"
+                mapboxAccessToken={mapboxToken}
+              >
+                <Marker
+                  longitude={booking.coordinates.lng}
+                  latitude={booking.coordinates.lat}
+                >
+                  <MapPin className="w-8 h-8 text-primary" />
+                </Marker>
+              </Map>
+            ) : (
+              <div className="w-full h-96 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
+                <div className="text-center space-y-2">
+                  <MapPin className="w-12 h-12 mx-auto text-primary/60" />
+                  <p className="text-lg font-semibold text-primary">
+                    Interactive Map
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Mapbox token not configured.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
