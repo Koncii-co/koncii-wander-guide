@@ -8,6 +8,7 @@ import InspirationCarousel from "@/components/InspirationCarousel";
 import QuickActions from "@/components/QuickActions";
 import ExploreSection from "@/components/ExploreSection";
 import ChatInterface from "@/components/ChatInterface";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +42,7 @@ const Index = () => {
           </nav>
 
           <div className="flex items-center space-x-2">
+            <ThemeToggle />
             <Button variant="ghost" size="icon">
               <Settings className="w-5 h-5" />
             </Button>
