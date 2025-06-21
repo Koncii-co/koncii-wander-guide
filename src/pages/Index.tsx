@@ -12,6 +12,7 @@ import ChatInterface from "@/components/ChatInterface";
 import ThemeToggle from "@/components/ThemeToggle";
 import KonciiLogo from "@/components/KonciiLogo";
 import ExpandedSearch from "@/components/ExpandedSearch";
+import MobileNavigation from "@/components/MobileNavigation";
 import { useNavigate } from "react-router-dom";
 import { syncUserWithSupabase } from "@/services/userService";
 import { useToast } from "@/hooks/use-toast";
@@ -102,6 +103,7 @@ const Index = () => {
             </h1>
           </div>
           
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Button variant="ghost" size="sm" className="hover:scale-105 transition-transform duration-200">Explore</Button>
             <Button 
@@ -132,45 +134,52 @@ const Index = () => {
           </nav>
 
           <div className="flex items-center space-x-2">
+            {/* Mobile Navigation */}
+            <MobileNavigation onChatToggle={() => setShowChat(!showChat)} />
+            
             <ThemeToggle />
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2 animate-fade-in">
-                <span className="text-sm font-medium hidden sm:inline">
-                  {user?.name || user?.email || 'User'}
-                </span>
+            
+            {/* Desktop Auth Section */}
+            <div className="hidden md:flex items-center space-x-2">
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-2 animate-fade-in">
+                  <span className="text-sm font-medium hidden sm:inline">
+                    {user?.name || user?.email || 'User'}
+                  </span>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleProfileEdit}
+                    className="flex items-center space-x-2 hover:scale-105 transition-all duration-200"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span className="hidden sm:inline">Edit Profile</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 hover:scale-105 transition-all duration-200"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span className="hidden sm:inline">Sign Out</span>
+                  </Button>
+                </div>
+              ) : (
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={handleProfileEdit}
-                  className="flex items-center space-x-2 hover:scale-105 transition-all duration-200"
+                  onClick={handleAuthClick}
+                  className="flex items-center space-x-2 hover:scale-105 transition-all duration-200 animate-fade-in"
                 >
-                  <Edit className="w-4 h-4" />
-                  <span className="hidden sm:inline">Edit Profile</span>
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 hover:scale-105 transition-all duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span className="hidden sm:inline">Sign Out</span>
-                </Button>
-              </div>
-            ) : (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleAuthClick}
-                className="flex items-center space-x-2 hover:scale-105 transition-all duration-200 animate-fade-in"
-              >
-                <User className="w-4 h-4" />
-                <span>Sign In</span>
+              )}
+              <Button variant="ghost" size="icon" className="hover:scale-105 transition-transform duration-200">
+                <Settings className="w-5 h-5" />
               </Button>
-            )}
-            <Button variant="ghost" size="icon" className="hover:scale-105 transition-transform duration-200">
-              <Settings className="w-5 h-5" />
-            </Button>
+            </div>
           </div>
         </div>
       </header>
