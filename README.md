@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+# Koncii - Your AI Travel Concierge
 
-## Project info
+Koncii is a modern, AI-powered travel planning application designed to provide a seamless and intelligent experience for discovering, planning, and booking trips. It leverages a powerful tech stack to deliver a feature-rich and user-friendly interface.
 
-**URL**: https://lovable.dev/projects/0b9f74f5-c702-430e-ab81-b8a25eb19af0
+## ✨ Features
 
-## How can I edit this code?
+- **AI-Powered Assistance**: Integrated chat interface for travel suggestions and planning.
+- **Interactive Maps**: Explore destinations and nearby attractions with Mapbox.
+- **Authentication**: Secure user sign-in and profile management with Auth0.
+- **Trip & Booking Management**: Users can view and manage their planned trips and bookings.
+- **Responsive Design**: A beautiful and consistent UI across all devices, built with shadcn/ui and Tailwind CSS.
+- **Light & Dark Modes**: Theme toggling for user preference.
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Framework**: [React](https://reactjs.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+- **Authentication**: [Auth0](https://auth0.com/)
+- **Mapping**: [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js)
+- **Routing**: [React Router](https://reactrouter.com/)
+- **State Management**: React Context & Hooks (with considerations for `@tanstack/react-query` for server state)
+- **Backend Service**: [Supabase](https://supabase.com/) (for user profile sync)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0b9f74f5-c702-430e-ab81-b8a25eb19af0) and start prompting.
+## 🚀 Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+Follow these instructions to get a local copy of the project up and running.
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- [Node.js](https://nodejs.org/) (version 18 or later recommended)
+- [npm](https://www.npmjs.com/) (or your preferred package manager like Yarn or pnpm)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/your-username/koncii_co_frontend.git
+    cd koncii_co_frontend
+    ```
+
+2.  **Install dependencies:**
+    ```sh
+    npm install
+    ```
+
+### Environment Variables
+
+To run the application, you need to create a `.env.local` file in the root of your project and add the following environment variables.
+
+```
+# Auth0 Configuration
+VITE_AUTH0_DOMAIN="your-auth0-domain"
+VITE_AUTH0_CLIENT_ID="your-auth0-client-id"
+
+# Supabase Configuration
+VITE_SUPABASE_URL="your-supabase-url"
+VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
+
+# Mapbox Configuration
+VITE_MAPBOX_TOKEN="your-mapbox-public-token"
+```
+
+- You can get your Auth0 credentials from the [Auth0 Dashboard](https://manage.auth0.com/).
+- You can get your Supabase credentials from the [Supabase Dashboard](https://app.supabase.com/).
+- You can get your Mapbox token from the [Mapbox Account](https://account.mapbox.com/).
+
+### Running the Application
+
+Once the dependencies are installed and the environment variables are set, you can run the development server:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173` (or another port if 5173 is in use).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📜 Available Scripts
 
-**Use GitHub Codespaces**
+In the project directory, you can run the following scripts:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `npm run dev`: Runs the app in development mode.
+- `npm run build`: Builds the app for production to the `dist` folder.
+- `npm run preview`: Serves the production build locally for testing.
+- `npm run lint`: Lints the project files using ESLint.
 
-## What technologies are used for this project?
+## 📁 Project Structure
 
-This project is built with:
+The project follows a standard Vite + React structure, with key directories organized as follows:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+koncii_co_frontend/
+├── public/                  # Static assets (images, fonts)
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── ui/              # shadcn/ui components
+│   │   └── ...
+│   ├── hooks/               # Custom React hooks
+│   ├── lib/                 # Utility functions
+│   ├── pages/               # Page components for routing
+│   ├── services/            # API service calls (Auth0, Supabase)
+│   └── ...
+├── .env.local               # Environment variables (untracked)
+├── package.json
+└── vite.config.ts           # Vite configuration
+```
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/0b9f74f5-c702-430e-ab81-b8a25eb19af0) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This README should provide a great starting point for anyone looking to understand or contribute to your project.
