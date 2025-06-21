@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,13 +13,39 @@ import ThemeToggle from "@/components/ThemeToggle";
 import KonciiLogo from "@/components/KonciiLogo";
 import ExpandedSearch from "@/components/ExpandedSearch";
 import { useNavigate } from "react-router-dom";
+import { syncUserWithSupabase } from "@/services/userService";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [showExpandedSearch, setShowExpandedSearch] = useState(false);
+  const [userSynced, setUserSynced] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth0();
+  const { isAuthenticated, user, logout, isLoading } = useAuth0();
+  const { toast } = useToast();
+
+  // Sync user with Supabase when authenticated
+  useEffect(() => {
+    const syncUser = async () => {
+      if (isAuthenticated && user && !userSynced && !isLoading) {
+        console.log('Syncing user with Supabase:', user);
+        const profile = await syncUserWithSupabase(user);
+        if (profile) {
+          setUserSynced(true);
+          console.log('User synced successfully:', profile);
+        } else {
+          toast({
+            title: "Sync Error",
+            description: "Failed to sync user profile. Please try refreshing the page.",
+            variant: "destructive"
+          });
+        }
+      }
+    };
+
+    syncUser();
+  }, [isAuthenticated, user, userSynced, isLoading, toast]);
 
   const handleSearchClick = () => {
     setShowExpandedSearch(true);
