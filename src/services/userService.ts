@@ -27,13 +27,16 @@ export const syncUserWithSupabase = async (auth0User: any): Promise<UserProfile 
       return null;
     }
 
+    // Handle missing email - use a fallback or the Auth0 sub as identifier
+    const email = auth0User.email || `${auth0User.sub}@auth0.local`;
+    
     if (existingUser) {
       // Update existing user
       const { data: updatedUser, error: updateError } = await supabase
         .from('user_profiles')
         .update({
-          email: auth0User.email,
-          name: auth0User.name || auth0User.nickname,
+          email: email,
+          name: auth0User.name || auth0User.nickname || auth0User.given_name || 'User',
           avatar_url: auth0User.picture,
           updated_at: new Date().toISOString()
         })
@@ -53,8 +56,8 @@ export const syncUserWithSupabase = async (auth0User: any): Promise<UserProfile 
         .from('user_profiles')
         .insert({
           auth0_user_id: auth0User.sub,
-          email: auth0User.email,
-          name: auth0User.name || auth0User.nickname,
+          email: email,
+          name: auth0User.name || auth0User.nickname || auth0User.given_name || 'User',
           avatar_url: auth0User.picture
         })
         .select()
