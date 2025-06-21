@@ -117,11 +117,25 @@ const Trips = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-card/50">
-            <TabsTrigger value="planned">
+          <TabsList className="grid w-full grid-cols-2 bg-card/50 backdrop-blur-sm border border-border/30 p-1">
+            <TabsTrigger 
+              value="planned"
+              className={`transition-all duration-200 ${
+                activeTab === "planned" 
+                  ? "bg-primary text-primary-foreground shadow-md" 
+                  : "hover:bg-muted/50"
+              }`}
+            >
               Planned Trips ({mockPlannedTrips.length})
             </TabsTrigger>
-            <TabsTrigger value="cart">
+            <TabsTrigger 
+              value="cart"
+              className={`transition-all duration-200 ${
+                activeTab === "cart" 
+                  ? "bg-primary text-primary-foreground shadow-md" 
+                  : "hover:bg-muted/50"
+              }`}
+            >
               Shopping Cart ({cartItems.length})
             </TabsTrigger>
           </TabsList>
