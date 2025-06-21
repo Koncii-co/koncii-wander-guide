@@ -1,12 +1,13 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Clock, Phone } from "lucide-react";
+import InteractiveMap from "./InteractiveMap";
 
 const ExploreSection = () => {
   const [selectedLocation, setSelectedLocation] = useState("current");
+  const [showMap, setShowMap] = useState(false);
 
   const restaurants = [
     {
@@ -78,7 +79,7 @@ const ExploreSection = () => {
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-3xl font-bold">Explore Your Area</h3>
-        <Button variant="ghost">View Map</Button>
+        <Button variant="ghost" onClick={() => setShowMap(true)}>View Map</Button>
       </div>
 
       <Tabs defaultValue="restaurants" className="space-y-6">
@@ -251,6 +252,11 @@ const ExploreSection = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Interactive Map Modal */}
+      {showMap && (
+        <InteractiveMap onClose={() => setShowMap(false)} />
+      )}
     </section>
   );
 };

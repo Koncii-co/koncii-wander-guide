@@ -1,7 +1,8 @@
-
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Calendar } from "lucide-react";
+import DestinationDetailPopup from "./DestinationDetailPopup";
 
 const destinations = [
   {
@@ -52,6 +53,8 @@ const destinations = [
 ];
 
 const InspirationCarousel = () => {
+  const [selectedDestination, setSelectedDestination] = useState(null);
+
   return (
     <div className="relative">
       <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
@@ -95,7 +98,7 @@ const InspirationCarousel = () => {
                   <span className="text-lg font-bold text-primary">
                     {destination.price}
                   </span>
-                  <Button size="sm" className="koncii-button">
+                  <Button size="sm" className="koncii-button" onClick={() => setSelectedDestination(destination)}>
                     Explore
                   </Button>
                 </div>
@@ -104,6 +107,13 @@ const InspirationCarousel = () => {
           </Card>
         ))}
       </div>
+
+      {selectedDestination && (
+        <DestinationDetailPopup
+          destination={selectedDestination}
+          onClose={() => setSelectedDestination(null)}
+        />
+      )}
     </div>
   );
 };
