@@ -95,10 +95,6 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
-
-  html {
-    @apply dark;
-  }
 }
 
 @layer components {
