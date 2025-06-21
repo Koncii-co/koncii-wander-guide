@@ -104,7 +104,7 @@ const QuickActions = ({ onChatOpen }: QuickActionsProps) => {
             Autoplay({
               delay: 3000,
               stopOnInteraction: true,
-            }),
+            }) as any,
           ]}
           opts={{
             align: "start",

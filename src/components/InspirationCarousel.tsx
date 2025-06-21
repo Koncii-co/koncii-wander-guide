@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ const InspirationCarousel = () => {
     },
     {
       id: 4,
-      name: "Paris, France",
+      name: "Paris, France",  
       title: "Paris, France",
       image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop",
       price: "$1,599",
@@ -116,7 +117,7 @@ const InspirationCarousel = () => {
               delay: 4000,
               stopOnInteraction: true,
               stopOnMouseEnter: true,
-            }),
+            }) as any,
           ]}
           opts={{
             align: "start",
