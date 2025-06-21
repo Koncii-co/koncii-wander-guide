@@ -29,10 +29,11 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState("");
+  const [initialPromptProcessed, setInitialPromptProcessed] = useState(false);
 
   // Handle initial prompt when component mounts
   useEffect(() => {
-    if (initialPrompt) {
+    if (initialPrompt && !initialPromptProcessed) {
       const userMessage: ChatMessage = {
         id: Date.now().toString(),
         sender: 'user',
@@ -41,6 +42,7 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
       };
 
       setMessages(prev => [...prev, userMessage]);
+      setInitialPromptProcessed(true);
 
       // Simulate AI response to the initial prompt
       setTimeout(() => {
@@ -54,7 +56,7 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
         setMessages(prev => [...prev, aiMessage]);
       }, 1000);
     }
-  }, [initialPrompt]);
+  }, [initialPrompt, initialPromptProcessed]);
 
   const sendMessage = () => {
     if (!inputMessage.trim()) return;
