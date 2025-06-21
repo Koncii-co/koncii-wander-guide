@@ -21,6 +21,10 @@ const Index = () => {
     setShowExpandedSearch(true);
   };
 
+  const handleBookingsClick = () => {
+    window.location.href = '/bookings';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -36,7 +40,13 @@ const Index = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <Button variant="ghost" size="sm">Explore</Button>
             <Button variant="ghost" size="sm">Trips</Button>
-            <Button variant="ghost" size="sm">Bookings</Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleBookingsClick}
+            >
+              Bookings
+            </Button>
             <Button 
               variant="ghost" 
               size="sm"
