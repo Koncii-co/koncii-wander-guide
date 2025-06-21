@@ -7,7 +7,7 @@ export interface Booking {
   trip_id?: string;
   destination: string;
   dates: string;
-  status: string; // Changed from union type to string to match database
+  status: string;
   image_url?: string;
   hotel?: string;
   travelers: number;
@@ -43,7 +43,11 @@ export const getUserBookings = async (auth0UserId: string): Promise<Booking[]> =
       return [];
     }
 
-    return data || [];
+    // Transform the data to match our interface
+    return (data || []).map(booking => ({
+      ...booking,
+      coordinates: booking.coordinates as { lat: number; lng: number } | undefined
+    }));
   } catch (error) {
     console.error('Error getting user bookings:', error);
     return [];
@@ -78,7 +82,10 @@ export const createBooking = async (auth0UserId: string, bookingData: Omit<Booki
       return null;
     }
 
-    return data;
+    return {
+      ...data,
+      coordinates: data.coordinates as { lat: number; lng: number } | undefined
+    };
   } catch (error) {
     console.error('Error creating booking:', error);
     return null;
@@ -115,7 +122,10 @@ export const updateBooking = async (auth0UserId: string, bookingId: string, upda
       return null;
     }
 
-    return data;
+    return {
+      ...data,
+      coordinates: data.coordinates as { lat: number; lng: number } | undefined
+    };
   } catch (error) {
     console.error('Error updating booking:', error);
     return null;

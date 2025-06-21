@@ -6,7 +6,7 @@ export interface Trip {
   user_id: string;
   destination: string;
   dates: string;
-  status: string; // Changed from union type to string to match database
+  status: string;
   image_url?: string;
   hotel?: string;
   travelers: number;
@@ -44,7 +44,11 @@ export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
       return [];
     }
 
-    return data || [];
+    // Transform the data to match our interface
+    return (data || []).map(trip => ({
+      ...trip,
+      coordinates: trip.coordinates as { lat: number; lng: number } | undefined
+    }));
   } catch (error) {
     console.error('Error getting user trips:', error);
     return [];
@@ -79,7 +83,10 @@ export const createTrip = async (auth0UserId: string, tripData: Omit<Trip, 'id' 
       return null;
     }
 
-    return data;
+    return {
+      ...data,
+      coordinates: data.coordinates as { lat: number; lng: number } | undefined
+    };
   } catch (error) {
     console.error('Error creating trip:', error);
     return null;
@@ -116,7 +123,10 @@ export const updateTrip = async (auth0UserId: string, tripId: string, updates: P
       return null;
     }
 
-    return data;
+    return {
+      ...data,
+      coordinates: data.coordinates as { lat: number; lng: number } | undefined
+    };
   } catch (error) {
     console.error('Error updating trip:', error);
     return null;
