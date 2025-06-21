@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, Users, Clock, Sparkles, MessageSquare, Camera, Navigation } from "lucide-react";
+import { MapPin, Calendar, Users, Clock, Sparkles, MessageSquare, Camera, Navigation, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import BookingCard from "@/components/BookingCard";
 import BookingMap from "@/components/BookingMap";
 import AITravelAssistant from "@/components/AITravelAssistant";
@@ -53,6 +54,11 @@ const mockBookings = [
 const Bookings = () => {
   const [selectedBooking, setSelectedBooking] = useState(mockBookings[0]);
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
+
+  const handleBackHome = () => {
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,11 +66,22 @@ const Bookings = () => {
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                My Bookings
-              </h1>
-              <p className="text-muted-foreground">Manage your trips with AI assistance</p>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackHome}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Home</span>
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  My Bookings
+                </h1>
+                <p className="text-muted-foreground">Manage your trips with AI assistance</p>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Button className="koncii-button">
