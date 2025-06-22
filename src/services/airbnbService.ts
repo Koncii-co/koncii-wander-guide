@@ -1,5 +1,4 @@
-
-const API_BASE_URL = 'https://api.koncii.co';
+const API_BASE_URL = 'https://api.koncii.co/mcp-airbnb';
 
 export interface AirbnbListing {
   id: string;
