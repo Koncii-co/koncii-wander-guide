@@ -1,7 +1,12 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, MapPin, Star, Sparkles, Sun, Wind, Droplets } from "lucide-react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { createTrip } from "@/services/tripsService";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface Destination {
   id: number;
@@ -19,11 +24,66 @@ interface DestinationDetailPopupProps {
 }
 
 const DestinationDetailPopup = ({ destination, onClose }: DestinationDetailPopupProps) => {
+  const { user, isAuthenticated } = useAuth0();
+  const { toast } = useToast();
+  const [isCreatingTrip, setIsCreatingTrip] = useState(false);
+
   const aiSuggestions = [
     { title: "Visit the Uluwatu Temple", description: "Experience a traditional Kecak fire dance at sunset.", icon: <Sparkles className="w-4 h-4 text-primary" /> },
     { title: "Explore the Tegallalang Rice Terraces", description: "Walk through lush green landscapes and enjoy stunning views.", icon: <Sparkles className="w-4 h-4 text-primary" /> },
     { title: "Relax on Seminyak Beach", description: "Enjoy the sunset, beach clubs, and vibrant nightlife.", icon: <Sparkles className="w-4 h-4 text-primary" /> }
   ];
+
+  const handleStartPlanning = async () => {
+    if (!isAuthenticated || !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to start planning your trip.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsCreatingTrip(true);
+
+    try {
+      // Extract price number from string (e.g., "$1,299" -> 1299)
+      const priceMatch = destination.price.match(/[\d,]+/);
+      const estimatedCost = priceMatch ? parseInt(priceMatch[0].replace(/,/g, '')) : 0;
+
+      const tripData = {
+        destination: destination.name,
+        dates: "To be planned", // Default value since we don't have specific dates
+        status: "planning" as const,
+        image_url: destination.image,
+        travelers: 1,
+        estimated_cost: estimatedCost,
+        activities: aiSuggestions.map(suggestion => suggestion.title),
+        coordinates: undefined // We could add coordinates if available
+      };
+
+      const newTrip = await createTrip(user.sub!, tripData);
+
+      if (newTrip) {
+        toast({
+          title: "Trip Added!",
+          description: `${destination.name} has been added to your trips.`,
+        });
+        onClose(); // Close the popup after successful creation
+      } else {
+        throw new Error("Failed to create trip");
+      }
+    } catch (error) {
+      console.error("Error creating trip:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add trip. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreatingTrip(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -102,9 +162,19 @@ const DestinationDetailPopup = ({ destination, onClose }: DestinationDetailPopup
 
           {/* Call to Action */}
           <div className="text-center pt-4">
-            <Button size="lg" className="koncii-button">
-              Start Planning Your Trip
+            <Button 
+              size="lg" 
+              className="koncii-button"
+              onClick={handleStartPlanning}
+              disabled={isCreatingTrip}
+            >
+              {isCreatingTrip ? "Adding to Trips..." : "Start Planning Your Trip"}
             </Button>
+            {!isAuthenticated && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Sign in to save trips to your account
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -112,4 +182,4 @@ const DestinationDetailPopup = ({ destination, onClose }: DestinationDetailPopup
   );
 };
 
-export default DestinationDetailPopup; 
+export default DestinationDetailPopup;
