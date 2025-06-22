@@ -1,8 +1,11 @@
+
 const API_BASE_URL = 'https://api.koncii.co';
 
 export interface TravelAgentResponse {
   response: string;
   status: string;
+  function_calls?: any[];
+  function_responses?: any[];
 }
 
 export interface ChatMessage {
@@ -132,6 +135,30 @@ class AITravelService {
       throw error;
     }
   }
+
+  async searchAirbnb(location: string, checkin: string, checkout: string): Promise<TravelAgentResponse> {
+    try {
+      const message = `Find Airbnb accommodations in ${location} from ${checkin} to ${checkout}. Please provide detailed listings with prices, ratings, and booking links.`;
+
+      const response = await fetch(`${this.baseUrl}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error searching Airbnb:', error);
+      throw error;
+    }
+  }
 }
 
-export const aiTravelService = new AITravelService(); 
+export const aiTravelService = new AITravelService();
