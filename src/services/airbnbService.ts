@@ -1,3 +1,4 @@
+
 const API_BASE_URL = 'https://api.koncii.co/mcp-airbnb';
 
 export interface AirbnbListing {
@@ -39,7 +40,7 @@ class AirbnbService {
       
       const message = `Find Airbnb accommodations in ${location} from ${checkin} to ${checkout}`;
       
-      const response = await fetch(`${this.baseUrl}/chat`, {
+      const response = await fetch(this.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
