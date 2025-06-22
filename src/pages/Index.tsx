@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -257,7 +256,10 @@ const Index = () => {
 
         {/* Explore Section */}
         <div className={`transition-all duration-1000 delay-1100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <ExploreSection />
+          <ExploreSection onAIAgentClick={() => {
+            setInitialChatPrompt("I want to explore travel options and get personalized recommendations. Can you help me plan my next adventure?");
+            setShowChat(true);
+          }} />
         </div>
       </main>
 

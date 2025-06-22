@@ -1,10 +1,10 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, MessageSquare, Send, Camera, MapPin, Utensils, Clock } from "lucide-react";
+import { aiTravelService } from "@/services/aiTravelService";
 
 interface Booking {
   id: number;
@@ -23,15 +23,20 @@ interface AITravelAssistantProps {
   booking: Booking;
 }
 
+interface ChatMessage {
+  type: 'user' | 'ai';
+  content: string;
+}
+
 const AITravelAssistant = ({ booking }: AITravelAssistantProps) => {
-  const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState([
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
-      type: "ai",
-      content: `Hi! I'm your AI travel assistant for your ${booking.destination} trip. I can help you with recommendations, weather updates, local tips, and more!`,
-      timestamp: new Date()
+      type: 'ai',
+      content: 'Hello! I\'m your AI travel assistant. How can I help you plan your next adventure?'
     }
   ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const aiSuggestions = [
     {
@@ -61,33 +66,54 @@ const AITravelAssistant = ({ booking }: AITravelAssistantProps) => {
   ];
 
   const quickQuestions = [
-    "What's the weather like?",
-    "Best time to visit attractions?",
-    "Local transportation options?",
-    "Cultural etiquette tips?"
+    "Plan a weekend trip",
+    "Find cheap flights",
+    "Best time to visit",
+    "Local recommendations"
   ];
 
-  const handleSendMessage = () => {
-    if (!message.trim()) return;
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
 
-    setChatMessages([
-      ...chatMessages,
-      {
-        type: "user",
-        content: message,
-        timestamp: new Date()
-      },
-      {
-        type: "ai",
-        content: `Great question! Based on your ${booking.destination} trip, here's what I recommend...`,
-        timestamp: new Date()
-      }
-    ]);
-    setMessage("");
+    const userMessage: ChatMessage = {
+      type: 'user',
+      content: inputMessage
+    };
+
+    setChatMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      const response = await aiTravelService.sendMessage(inputMessage);
+      
+      const aiMessage: ChatMessage = {
+        type: 'ai',
+        content: response.response
+      };
+
+      setChatMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: ChatMessage = {
+        type: 'ai',
+        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.'
+      };
+      setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleQuickQuestion = (question: string) => {
-    setMessage(question);
+    setInputMessage(question);
+    setTimeout(() => handleSendMessage(), 100);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleSendMessage();
+    }
   };
 
   const handleSuggestionClick = (suggestion: any) => {
@@ -95,13 +121,11 @@ const AITravelAssistant = ({ booking }: AITravelAssistantProps) => {
       ...chatMessages,
       {
         type: "user",
-        content: suggestion.action,
-        timestamp: new Date()
+        content: suggestion.action
       },
       {
         type: "ai",
-        content: `Here are my ${suggestion.title.toLowerCase()} for ${booking.destination}...`,
-        timestamp: new Date()
+        content: `Here are my ${suggestion.title.toLowerCase()} for ${booking.destination}...`
       }
     ]);
   };
@@ -191,13 +215,19 @@ const AITravelAssistant = ({ booking }: AITravelAssistantProps) => {
           {/* Message Input */}
           <div className="flex space-x-2">
             <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask me anything about your trip..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Ask about travel..."
               className="flex-1"
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              disabled={isLoading}
             />
-            <Button onClick={handleSendMessage} className="koncii-button">
+            <Button
+              onClick={handleSendMessage}
+              size="icon"
+              disabled={isLoading || !inputMessage.trim()}
+              className="koncii-button"
+            >
               <Send className="w-4 h-4" />
             </Button>
           </div>

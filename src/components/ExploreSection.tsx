@@ -2,10 +2,14 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Clock, Phone } from "lucide-react";
+import { MapPin, Star, Clock, Phone, Sparkles, Plane, Compass } from "lucide-react";
 import InteractiveMap from "./InteractiveMap";
 
-const ExploreSection = () => {
+interface ExploreSectionProps {
+  onAIAgentClick?: () => void;
+}
+
+const ExploreSection = ({ onAIAgentClick }: ExploreSectionProps) => {
   const [selectedLocation, setSelectedLocation] = useState("current");
   const [showMap, setShowMap] = useState(false);
 
@@ -79,8 +83,50 @@ const ExploreSection = () => {
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-3xl font-bold">Explore Your Area</h3>
-        <Button variant="ghost" onClick={() => setShowMap(true)}>View Map</Button>
+        <div className="flex items-center space-x-3">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowMap(true)}
+            className="flex items-center space-x-2"
+          >
+            <MapPin className="w-4 h-4" />
+            View Map
+          </Button>
+          <Button 
+            onClick={onAIAgentClick}
+            className="koncii-button flex items-center space-x-2 hover:scale-105 transition-all duration-200"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>AI Travel Agent</span>
+          </Button>
+        </div>
       </div>
+
+      {/* AI Travel Agent Prominent Card */}
+      <Card className="koncii-card bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-primary/20 rounded-full">
+                <Plane className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">AI Travel Planning</h4>
+                <p className="text-sm text-muted-foreground">
+                  Get personalized travel recommendations, plan itineraries, and discover hidden gems
+                </p>
+              </div>
+            </div>
+            <Button 
+              onClick={onAIAgentClick}
+              className="koncii-button flex items-center space-x-2"
+            >
+              <Compass className="w-4 h-4" />
+              <span>Start Planning</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="restaurants" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-5 bg-card/50 backdrop-blur-sm">

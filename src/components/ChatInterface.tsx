@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Send, Bot, User } from "lucide-react";
+import { aiTravelService } from "@/services/aiTravelService";
+import SafeImage from "./SafeImage";
 
 //npm install react-markdown
 
@@ -20,16 +22,17 @@ interface Place {
 interface ChatMessage {
   id: string;
   sender: "user" | "ai";
-  message: string | Place[];
+  message: string;
   timestamp: Date;
   agent?: string;
 }
 
 interface ChatInterfaceProps {
   onClose: () => void;
+  initialPrompt?: string;
 }
 
-const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
+const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "1",
@@ -41,72 +44,66 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  // Handle initial prompt if provided
+  useEffect(() => {
+    if (initialPrompt) {
+      setInputMessage(initialPrompt);
+      // Automatically send the initial prompt
+      setTimeout(() => {
+        handleSendMessage(initialPrompt);
+      }, 100);
+    }
+  }, [initialPrompt]);
+
+  const handleSendMessage = async (messageToSend?: string) => {
+    const message = messageToSend || inputMessage;
+    if (!message.trim()) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       sender: "user",
-      message: inputMessage,
+      message: message,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
+    setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:9000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: inputMessage }),
-      });
+      const data = await aiTravelService.sendMessage(message);
 
-      const data = await res.json();
+      const aiMessage: ChatMessage = {
+        id: Date.now().toString(),
+        sender: "ai",
+        message: data.response,
+        timestamp: new Date(),
+        agent: "travel_concierge_agent",
+      };
 
-      const newMessages: ChatMessage[] = [];
-
-      // Handle text replies
-      if (Array.isArray(data.text)) {
-        data.text.forEach((text: string) => {
-          newMessages.push({
-            id: Date.now().toString() + Math.random(),
-            sender: "ai",
-            message: text,
-            timestamp: new Date(),
-            agent: "travel_concierge_agent",
-          });
-        });
-      }
-
-      // Handle places
-      if (Array.isArray(data.reply) && data.reply.length > 0) {
-        newMessages.push({
-          id: Date.now().toString() + "_places",
-          sender: "ai",
-          message: data.reply,
-          timestamp: new Date(),
-          agent: "travel_concierge_agent",
-        });
-      }
-
-      setMessages((prev) => [...prev, ...newMessages]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error("Error talking to backend:", error);
       const errorMessage: ChatMessage = {
         id: (Date.now() + 2).toString(),
         sender: "ai",
-        message: "Sorry, something went wrong. Please try again later.",
+        message: "Sorry, I'm having trouble connecting to my travel planning system. Please try again later.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const sendMessage = () => {
+    handleSendMessage();
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isLoading) {
       sendMessage();
     }
   };
@@ -146,44 +143,12 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
                     ) : (
                       <User className="w-4 h-4 mt-0.5 text-primary-foreground" />
                     )}
-                    <div className="flex-1">
-                      {Array.isArray(message.message) ? (
-                        <div className="space-y-4">
-                          {message.message.map((place, idx) => (
-                            <div
-                              key={idx}
-                              className="bg-background p-2 rounded-md border"
-                            >
-                              {place.image_url && (
-                                <img
-                                  src={place.image_url}
-                                  alt={place.place_name}
-                                  className="w-full max-h-40 object-cover rounded"
-                                  onError={(e) =>
-                                    (e.currentTarget.style.display = "none")
-                                  }
-                                />
-                              )}
-                              <h3 className="font-semibold text-sm mt-2">
-                                {place.place_name}
-                              </h3>
-                              <p className="text-xs text-muted-foreground">
-                                {place.address}
-                              </p>
-                              <p className="text-xs mt-1">{place.highlights}</p>
-                              <p className="text-xs mt-1">
-                                ⭐ {place.review_ratings}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="prose prose-sm text-sm text-muted-foreground">
-                          <ReactMarkdown>
-                            {message.message as string}
-                          </ReactMarkdown>
-                        </div>
-                      )}
+                    <div className="flex-1 min-w-0">
+                      <div className="prose prose-sm text-sm text-muted-foreground">
+                        <ReactMarkdown>
+                          {message.message}
+                        </ReactMarkdown>
+                      </div>
                       {message.agent && (
                         <p className="text-xs text-muted-foreground mt-1">
                           via {message.agent.replace(/_/g, " ")}
@@ -194,6 +159,25 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
                 </div>
               </div>
             ))}
+            
+            {/* Loading Indicator */}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] rounded-2xl px-4 py-2 bg-card border border-border/50">
+                  <div className="flex items-start space-x-2">
+                    <Bot className="w-4 h-4 mt-0.5 text-primary" />
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">AI is thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input Box */}
@@ -205,11 +189,13 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
                 onKeyDown={handleKeyPress}
                 placeholder="Ask me anything about your trip..."
                 className="flex-1 bg-background/50"
+                disabled={isLoading}
               />
               <Button
                 onClick={sendMessage}
                 size="icon"
                 className="koncii-button"
+                disabled={isLoading || !inputMessage.trim()}
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -228,6 +214,7 @@ const ChatInterface = ({ onClose }: ChatInterfaceProps) => {
                   size="sm"
                   className="text-xs bg-card/50 hover:bg-primary hover:text-primary-foreground"
                   onClick={() => setInputMessage(suggestion)}
+                  disabled={isLoading}
                 >
                   {suggestion}
                 </Button>
