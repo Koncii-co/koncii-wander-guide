@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'https://api.koncii.co';
+const API_BASE_URL = 'https://api2.koncii.co';
 
 export interface TravelAgentResponse {
   response: string;
