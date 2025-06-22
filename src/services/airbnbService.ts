@@ -1,4 +1,5 @@
 
+
 const API_BASE_URL = 'https://api.koncii.co/mcp-airbnb';
 
 export interface AirbnbListing {
@@ -60,6 +61,34 @@ class AirbnbService {
       return this.parseAirbnbResponse(data);
     } catch (error) {
       console.error('Error searching Airbnbs:', error);
+      throw error;
+    }
+  }
+
+  async searchAirbnbsWithPrompt(prompt: string): Promise<AirbnbListing[]> {
+    try {
+      console.log('Searching Airbnbs with prompt:', prompt);
+      
+      const response = await fetch(this.baseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: prompt }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const data: AirbnbSearchResponse = await response.json();
+      console.log('Airbnb AI search response:', data);
+      
+      return this.parseAirbnbResponse(data);
+    } catch (error) {
+      console.error('Error searching Airbnbs with prompt:', error);
       throw error;
     }
   }

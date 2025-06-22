@@ -20,6 +20,8 @@ const Bookings = () => {
   const [cartItems, setCartItems] = useState<AirbnbListing[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchParams, setSearchParams] = useState<{location: string, checkin: string, checkout: string} | null>(null);
+  const [lastSearchType, setLastSearchType] = useState<'form' | 'prompt'>('form');
+  const [lastPrompt, setLastPrompt] = useState<string>('');
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading } = useAuth0();
   const { toast } = useToast();
@@ -32,6 +34,8 @@ const Bookings = () => {
     try {
       setIsSearching(true);
       setSearchParams({ location, checkin, checkout });
+      setLastSearchType('form');
+      setLastPrompt('');
       console.log('Searching for Airbnbs:', { location, checkin, checkout });
       
       const listings = await airbnbService.searchAirbnbs(location, checkin, checkout);
@@ -46,6 +50,36 @@ const Bookings = () => {
       });
     } catch (error) {
       console.error('Search error:', error);
+      toast({
+        title: "Search Error",
+        description: "Failed to search for accommodations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handlePromptSearch = async (prompt: string) => {
+    try {
+      setIsSearching(true);
+      setLastSearchType('prompt');
+      setLastPrompt(prompt);
+      setSearchParams(null);
+      console.log('Searching for Airbnbs with prompt:', prompt);
+      
+      const listings = await airbnbService.searchAirbnbsWithPrompt(prompt);
+      console.log('Found listings from prompt:', listings);
+      
+      setAirbnbListings(listings);
+      setActiveTab("results");
+      
+      toast({
+        title: "AI Search Complete",
+        description: `Found ${listings.length} accommodations based on your request`,
+      });
+    } catch (error) {
+      console.error('Prompt search error:', error);
       toast({
         title: "Search Error",
         description: "Failed to search for accommodations. Please try again.",
@@ -216,24 +250,35 @@ const Bookings = () => {
           </TabsList>
 
           <TabsContent value="search" className="space-y-6">
-            <AirbnbSearchForm onSearch={handleSearch} isLoading={isSearching} />
+            <AirbnbSearchForm 
+              onSearch={handleSearch} 
+              onPromptSearch={handlePromptSearch}
+              isLoading={isSearching} 
+            />
             
-            {searchParams && (
+            {(searchParams || lastPrompt) && (
               <Card className="koncii-card">
                 <CardHeader>
                   <CardTitle>Recent Search</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center space-x-4 text-sm">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="w-4 h-4 text-primary" />
-                      <span>{searchParams.location}</span>
+                  {lastSearchType === 'form' && searchParams ? (
+                    <div className="flex items-center space-x-4 text-sm">
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        <span>{searchParams.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="w-4 h-4 text-primary" />
+                        <span>{searchParams.checkin} to {searchParams.checkout}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4 text-primary" />
-                      <span>{searchParams.checkin} to {searchParams.checkout}</span>
+                  ) : (
+                    <div className="text-sm">
+                      <p className="text-muted-foreground mb-2">AI Search Query:</p>
+                      <p className="italic">"{lastPrompt}"</p>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -245,7 +290,7 @@ const Bookings = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-semibold">
                     Found {airbnbListings.length} accommodations
-                    {searchParams && ` in ${searchParams.location}`}
+                    {lastSearchType === 'form' && searchParams && ` in ${searchParams.location}`}
                   </h2>
                   <Button
                     variant="outline"
@@ -273,7 +318,7 @@ const Bookings = () => {
                   <Search className="w-16 h-16 mx-auto text-muted-foreground" />
                   <h3 className="text-xl font-semibold">No results yet</h3>
                   <p className="text-muted-foreground">
-                    Start by searching for accommodations in your desired location
+                    Start by searching for accommodations using the form or AI search
                   </p>
                   <Button className="koncii-button" onClick={() => setActiveTab("search")}>
                     Start Search
