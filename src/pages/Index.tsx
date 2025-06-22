@@ -94,6 +94,52 @@ const Index = () => {
     setInitialChatPrompt("");
   };
 
+  // Delhi-curated destinations data
+  const delhiDestinations = [
+    {
+      id: 1,
+      name: "Red Fort",
+      location: "Old Delhi",
+      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=300&fit=crop",
+      description: "Historic Mughal fortress and UNESCO World Heritage Site"
+    },
+    {
+      id: 2,
+      name: "India Gate",
+      location: "Central Delhi",
+      image: "https://images.unsplash.com/photo-1580500550469-e5a34e8d3d9c?w=400&h=300&fit=crop",
+      description: "War memorial and iconic landmark of Delhi"
+    },
+    {
+      id: 3,
+      name: "Lotus Temple",
+      location: "South Delhi",
+      image: "https://images.unsplash.com/photo-1605649487212-47bdab064df0?w=400&h=300&fit=crop",
+      description: "Bahá'í House of Worship known for its lotus-like architecture"
+    },
+    {
+      id: 4,
+      name: "Humayun's Tomb",
+      location: "Central Delhi",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+      description: "Mughal architecture masterpiece and garden tomb"
+    },
+    {
+      id: 5,
+      name: "Qutub Minar",
+      location: "South Delhi",
+      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=300&fit=crop",
+      description: "Tallest brick minaret in the world"
+    },
+    {
+      id: 6,
+      name: "Chandni Chowk",
+      location: "Old Delhi",
+      image: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=400&h=300&fit=crop",
+      description: "Bustling market street in the heart of Old Delhi"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative">
       {/* Glittery Background */}
@@ -244,6 +290,75 @@ const Index = () => {
         <div className={`transition-all duration-1000 delay-700 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} animate-ease-in-bounce`}>
           <QuickActions onChatOpen={handleChatOpenWithPrompt} />
         </div>
+
+        {/* Delhi-Curated Destinations */}
+        <section className={`space-y-6 transition-all duration-1000 delay-900 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} animate-ease-in-bounce`}>
+          <div className="flex items-center justify-between">
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text animate-bounce-in-ease">
+              Explore Delhi's Heritage
+            </h3>
+            <Button variant="ghost" className="hover:scale-105 transition-transform duration-200">
+              View All
+            </Button>
+          </div>
+          
+          {/* Delhi Destinations Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {delhiDestinations.map((destination) => (
+              <Card key={destination.id} className="koncii-card group cursor-pointer hover:scale-105 transition-all duration-300 overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <img
+                      src={destination.image}
+                      alt={destination.name}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <h4 className="text-lg font-semibold">{destination.name}</h4>
+                      <p className="text-sm opacity-90 flex items-center">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        {destination.location}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm text-muted-foreground">{destination.description}</p>
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-3 koncii-button"
+                      onClick={() => handleChatOpenWithPrompt(`Tell me more about ${destination.name} in Delhi and help me plan a visit there.`)}
+                    >
+                      Plan Visit
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Delhi Travel Tips */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <Card className="koncii-card">
+              <CardContent className="p-4 text-center">
+                <h4 className="font-semibold mb-2">Best Time to Visit</h4>
+                <p className="text-sm text-muted-foreground">October to March offers pleasant weather for exploring Delhi's attractions.</p>
+              </CardContent>
+            </Card>
+            <Card className="koncii-card">
+              <CardContent className="p-4 text-center">
+                <h4 className="font-semibold mb-2">Local Transport</h4>
+                <p className="text-sm text-muted-foreground">Delhi Metro is the most convenient way to travel across the city.</p>
+              </CardContent>
+            </Card>
+            <Card className="koncii-card">
+              <CardContent className="p-4 text-center">
+                <h4 className="font-semibold mb-2">Must Try Food</h4>
+                <p className="text-sm text-muted-foreground">Street food at Chandni Chowk and Connaught Place is a must-experience.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
         {/* Inspiration Carousel */}
         <section className={`space-y-6 transition-all duration-1000 delay-900 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} animate-ease-in-bounce`}>
