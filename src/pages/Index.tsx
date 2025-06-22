@@ -12,6 +12,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import KonciiLogo from "@/components/KonciiLogo";
 import ExpandedSearch from "@/components/ExpandedSearch";
 import MobileNavigation from "@/components/MobileNavigation";
+import GlitteryBackground from "@/components/GlitteryBackground";
 import { useNavigate } from "react-router-dom";
 import { syncUserWithSupabase } from "@/services/userService";
 import { useToast } from "@/hooks/use-toast";
@@ -94,9 +95,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative">
+      {/* Glittery Background */}
+      <GlitteryBackground />
+
       {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-1">
         <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
@@ -105,10 +109,10 @@ const Index = () => {
       <header className={`sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 transition-all duration-500 ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3 group">
-            <div className="transition-transform duration-300 group-hover:scale-110">
+            <div className="transition-transform duration-300 group-hover:scale-110 animate-bounce-in">
               <KonciiLogo size={40} className="text-primary" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-all duration-300 group-hover:scale-105">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent transition-all duration-300 group-hover:scale-105 animate-ease-in-bounce">
               Koncii
             </h1>
           </div>
@@ -199,20 +203,20 @@ const Index = () => {
         {/* Hero Section */}
         <section className={`text-center space-y-6 py-12 transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="space-y-4">
-            <h2 className="text-4xl md:text-6xl font-bold transition-all duration-1000 hover:scale-105">
+            <h2 className="text-4xl md:text-6xl font-bold transition-all duration-1000 hover:scale-105 animate-bounce-in-ease">
               Your AI Travel
-              <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
+              <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse animate-ease-in-bounce">
                 Concierge
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto transition-all duration-1000 delay-300 hover:text-foreground">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto transition-all duration-1000 delay-300 hover:text-foreground animate-ease-in-bounce">
               Discover, plan, and book your perfect trip with AI-powered assistance every step of the way.
             </p>
           </div>
 
           {/* Enhanced Search Bar */}
           <div className={`max-w-2xl mx-auto relative transition-all duration-1000 delay-500 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <Card className="koncii-card hover:shadow-2xl transition-all duration-500 hover:scale-105 group">
+            <Card className="koncii-card hover:shadow-2xl transition-all duration-500 hover:scale-105 group animate-bounce-in">
               <CardContent className="p-2 md:p-2">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
@@ -237,14 +241,14 @@ const Index = () => {
         </section>
 
         {/* Quick Actions */}
-        <div className={`transition-all duration-1000 delay-700 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <div className={`transition-all duration-1000 delay-700 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} animate-ease-in-bounce`}>
           <QuickActions onChatOpen={handleChatOpenWithPrompt} />
         </div>
 
         {/* Inspiration Carousel */}
-        <section className={`space-y-6 transition-all duration-1000 delay-900 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <section className={`space-y-6 transition-all duration-1000 delay-900 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} animate-ease-in-bounce`}>
           <div className="flex items-center justify-between">
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text">
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text animate-bounce-in-ease">
               Trending Destinations
             </h3>
             <Button variant="ghost" className="hover:scale-105 transition-transform duration-200">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,11 +45,14 @@ const ChatInterface = ({ onClose, initialPrompt }: ChatInterfaceProps) => {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const initialPromptProcessed = useRef(false);
 
-  // Handle initial prompt if provided
+  // Handle initial prompt
   useEffect(() => {
-    if (initialPrompt) {
+    if (initialPrompt && !initialPromptProcessed.current) {
+      console.log('Processing initial prompt:', initialPrompt);
       setInputMessage(initialPrompt);
+      initialPromptProcessed.current = true;
       // Automatically send the initial prompt
       setTimeout(() => {
         handleSendMessage(initialPrompt);
