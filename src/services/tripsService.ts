@@ -21,17 +21,26 @@ export interface Trip {
 
 export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
   try {
+    console.log('Getting trips for user:', auth0UserId);
+    
     // First get the user profile to get the internal user_id
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('id')
       .eq('auth0_user_id', auth0UserId)
       .single();
 
-    if (!profile) {
-      console.error('User profile not found');
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError);
       return [];
     }
+
+    if (!profile) {
+      console.error('User profile not found for auth0_user_id:', auth0UserId);
+      return [];
+    }
+
+    console.log('Found user profile:', profile);
 
     const { data, error } = await supabase
       .from('trips')
@@ -43,6 +52,8 @@ export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
       console.error('Error fetching trips:', error);
       return [];
     }
+
+    console.log('Fetched trips:', data);
 
     // Transform the data to match our interface
     return (data || []).map(trip => ({
@@ -57,17 +68,28 @@ export const getUserTrips = async (auth0UserId: string): Promise<Trip[]> => {
 
 export const createTrip = async (auth0UserId: string, tripData: Omit<Trip, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'added_date'>): Promise<Trip | null> => {
   try {
+    console.log('Creating trip for auth0UserId:', auth0UserId);
+    console.log('Trip data:', tripData);
+
     // Get user profile to get the user_id
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('id')
       .eq('auth0_user_id', auth0UserId)
       .single();
 
-    if (!profile) {
-      console.error('User profile not found');
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError);
       return null;
     }
+
+    if (!profile) {
+      console.error('User profile not found for auth0_user_id:', auth0UserId);
+      console.log('This might mean the user profile was not synced properly');
+      return null;
+    }
+
+    console.log('Found user profile for trip creation:', profile);
 
     const { data, error } = await supabase
       .from('trips')
@@ -82,6 +104,8 @@ export const createTrip = async (auth0UserId: string, tripData: Omit<Trip, 'id' 
       console.error('Error creating trip:', error);
       return null;
     }
+
+    console.log('Successfully created trip:', data);
 
     return {
       ...data,

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +34,24 @@ const DestinationDetailPopup = ({ destination, onClose }: DestinationDetailPopup
   ];
 
   const handleStartPlanning = async () => {
+    console.log('Starting trip planning process...');
+    console.log('User authenticated:', isAuthenticated);
+    console.log('User object:', user);
+
     if (!isAuthenticated || !user) {
       toast({
         title: "Authentication Required",
         description: "Please sign in to start planning your trip.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user.sub) {
+      console.error('User sub is missing:', user);
+      toast({
+        title: "Authentication Error",
+        description: "User ID is missing. Please try signing in again.",
         variant: "destructive"
       });
       return;
@@ -53,31 +66,41 @@ const DestinationDetailPopup = ({ destination, onClose }: DestinationDetailPopup
 
       const tripData = {
         destination: destination.name,
-        dates: "To be planned", // Default value since we don't have specific dates
+        dates: "To be planned",
         status: "planning" as const,
         image_url: destination.image,
         travelers: 1,
         estimated_cost: estimatedCost,
         activities: aiSuggestions.map(suggestion => suggestion.title),
-        coordinates: undefined // We could add coordinates if available
+        coordinates: undefined
       };
 
-      const newTrip = await createTrip(user.sub!, tripData);
+      console.log('Trip data to be created:', tripData);
+      console.log('Creating trip for user:', user.sub);
+
+      const newTrip = await createTrip(user.sub, tripData);
+
+      console.log('Trip creation result:', newTrip);
 
       if (newTrip) {
         toast({
           title: "Trip Added!",
           description: `${destination.name} has been added to your trips.`,
         });
-        onClose(); // Close the popup after successful creation
+        onClose();
       } else {
-        throw new Error("Failed to create trip");
+        console.error("createTrip returned null");
+        toast({
+          title: "Error",
+          description: "Failed to create trip. Your profile might not be synced. Please try refreshing the page.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Error creating trip:", error);
       toast({
         title: "Error",
-        description: "Failed to add trip. Please try again.",
+        description: `Failed to add trip: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
