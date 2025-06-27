@@ -13,6 +13,7 @@ import KonciiLogo from "@/components/KonciiLogo";
 import ExpandedSearch from "@/components/ExpandedSearch";
 import MobileNavigation from "@/components/MobileNavigation";
 import GlitteryBackground from "@/components/GlitteryBackground";
+import SafeImage from "@/components/SafeImage";
 import { useNavigate } from "react-router-dom";
 import { syncUserWithSupabase } from "@/services/userService";
 import { useToast } from "@/hooks/use-toast";
@@ -94,48 +95,48 @@ const Index = () => {
     setInitialChatPrompt("");
   };
 
-  // Delhi-curated destinations data
+  // Delhi-curated destinations data with correct images
   const delhiDestinations = [
     {
       id: 1,
       name: "Red Fort",
       location: "Old Delhi",
-      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=300&fit=crop&q=80",
       description: "Historic Mughal fortress and UNESCO World Heritage Site"
     },
     {
       id: 2,
       name: "India Gate",
       location: "Central Delhi",
-      image: "https://images.unsplash.com/photo-1580500550469-e5a34e8d3d9c?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1597149212-5e8a35d0ba5c?w=400&h=300&fit=crop&q=80",
       description: "War memorial and iconic landmark of Delhi"
     },
     {
       id: 3,
       name: "Lotus Temple",
       location: "South Delhi",
-      image: "https://images.unsplash.com/photo-1605649487212-47bdab064df0?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1605649487212-47bdab064df0?w=400&h=300&fit=crop&q=80",
       description: "Bahá'í House of Worship known for its lotus-like architecture"
     },
     {
       id: 4,
       name: "Humayun's Tomb",
       location: "Central Delhi",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&q=80",
       description: "Mughal architecture masterpiece and garden tomb"
     },
     {
       id: 5,
       name: "Qutub Minar",
       location: "South Delhi",
-      image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?w=400&h=300&fit=crop&q=80",
       description: "Tallest brick minaret in the world"
     },
     {
       id: 6,
       name: "Chandni Chowk",
       location: "Old Delhi",
-      image: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=400&h=300&fit=crop&q=80",
       description: "Bustling market street in the heart of Old Delhi"
     }
   ];
@@ -251,7 +252,7 @@ const Index = () => {
           <div className="space-y-4">
             <h2 className="text-4xl md:text-6xl font-bold transition-all duration-1000 hover:scale-105 animate-bounce-in-ease">
               Your AI Travel
-              <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse animate-ease-in-bounce">
+              <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-pulse animate-ease-in-bounce">
                 Concierge
               </span>
             </h2>
@@ -308,10 +309,15 @@ const Index = () => {
               <Card key={destination.id} className="koncii-card group cursor-pointer hover:scale-105 transition-all duration-300 overflow-hidden">
                 <CardContent className="p-0">
                   <div className="relative">
-                    <img
+                    <SafeImage
                       src={destination.image}
                       alt={destination.name}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                      fallbackIcon={
+                        <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                      }
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
